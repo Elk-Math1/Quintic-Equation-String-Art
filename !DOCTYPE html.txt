@@ -3,494 +3,479 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>연산 퀴즈 게임</title>
+    <title>탑뷰 축구 게임</title>
     <style>
-        *{margin:0;padding:0;box-sizing:border-box}
-        body{font-family:Arial,sans-serif;background:#f5f5f5;min-height:100vh;display:flex;justify-content:center;align-items:center;color:#333}
-        .container{background:white;border-radius:8px;padding:40px;box-shadow:0 2px 10px rgba(0,0,0,.1);text-align:center;min-width:450px;border:1px solid #ddd}
-        h1{font-size:2.5em;margin-bottom:30px;color:#333}
-        .screen{display:none}.screen.active{display:block}
-        button{padding:15px 30px;font-size:1.2em;border:1px solid #ddd;border-radius:4px;cursor:pointer;font-weight:bold;background:white;transition:all .3s ease}
-        .mode-btn{padding:20px 40px;font-size:1.5em;border:2px solid #007bff;color:#007bff}
-        .mode-btn:hover{background:#007bff;color:white}
-        .difficulty-btn{padding:12px 24px;font-size:1.1em}
-        .difficulty-btn.active,.difficulty-btn:hover{background:#007bff;color:white;border-color:#007bff}
-        .special-btn{padding:10px 20px;font-size:1em;border:2px solid;border-radius:4px;cursor:pointer;font-weight:bold;background:white;transition:all .3s ease}
-        .hardcore-btn{border-color:#dc3545;color:#dc3545}.hardcore-btn:hover,.hardcore-btn.active{background:#dc3545;color:white}
-        .middle-btn{border-color:#fd7e14;color:#fd7e14}.middle-btn:hover,.middle-btn.active{background:#fd7e14;color:white}
-        .primary-btn{background:#007bff;color:white;border-color:#007bff}.primary-btn:hover{background:#0056b3;border-color:#0056b3}
-        .success-btn{background:#28a745;color:white;border:none}.success-btn:hover{background:#218838}
-        .secondary-btn{background:#6c757d;color:white;border-color:#6c757d}.secondary-btn:hover{background:#545b62;border-color:#545b62}
-        .card{background:#f8f9fa;border:1px solid #e9ecef;border-radius:4px;padding:20px;margin-bottom:30px}
-        .flex-center{display:flex;justify-content:center;align-items:center;gap:20px}
-        .special-modes{display:flex;justify-content:center;gap:15px;margin-bottom:30px}
-        .development-notice{color:#dc3545;font-size:1.2em;font-weight:bold;margin-top:15px;display:none}
-        .time-control{display:flex;align-items:center;justify-content:center;gap:15px;margin-bottom:15px}
-        .time-btn-group{display:flex;flex-direction:column;gap:2px;height:52px}
-        .time-btn{width:35px;height:25px;border-radius:6px;background:#007bff;color:white;border:none;font-size:1em;font-weight:bold;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s ease;user-select:none;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent}
-        .time-btn:hover{background:#0056b3;transform:scale(1.05)}.time-btn:active{transform:scale(0.95);background:#004085}
-        .time-display{font-size:1.8em;font-weight:bold;color:#007bff;min-width:120px;text-align:center;height:52px;display:flex;align-items:center;justify-content:center}
-        .game-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:30px;padding:15px;background:#f8f9fa;border-radius:4px;border:1px solid #e9ecef}
-        .timer{font-size:1.5em;font-weight:bold;color:#dc3545}
-        .question-timer{font-size:1.2em;font-weight:bold;color:#ff6b35;margin-top:10px;margin-bottom:20px}
-        .question{font-size:2em;font-weight:bold;margin-bottom:30px}
-        input[type="number"]{font-size:1.5em;padding:15px;border:1px solid #ddd;border-radius:4px;width:200px;text-align:center;background:white;color:#333;outline:none;-moz-appearance:textfield;margin-bottom:30px}
-        input[type="number"]::-webkit-outer-spin-button,input[type="number"]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
-        input[type="number"]:focus{border-color:#007bff}
-        .buttons{display:flex;gap:15px;justify-content:center;margin-bottom:20px}
-        .score-display{font-size:1.5em;font-weight:bold;color:#007bff;margin-bottom:20px}
-        .indicator{color:white;padding:5px 15px;border-radius:20px;font-size:0.9em;margin-left:10px;font-weight:bold}
-        .hardcore-indicator{background:#dc3545}.middle-indicator{background:#fd7e14}
-        .feedback{font-size:1.3em;margin-top:20px;padding:15px;border-radius:4px;font-weight:bold;min-height:50px;display:flex;align-items:center;justify-content:center}
-        .feedback.correct{background:#d4edda;color:#155724;border:1px solid #c3e6cb}
-        .feedback.incorrect{background:#f8d7da;color:#721c24;border:1px solid #f5c6cb}
-        @keyframes correctEffect{0%{transform:scale(1)}50%{transform:scale(1.1);background:#28a745;color:white}100%{transform:scale(1)}}
-        @keyframes incorrectEffect{0%{transform:translateX(0)}25%{transform:translateX(-10px)}75%{transform:translateX(10px)}100%{transform:translateX(0)}}
-        @keyframes scoreEffect{0%{transform:scale(1)}50%{transform:scale(1.3);color:#28a745}100%{transform:scale(1)}}
-        .question.correct-flash{animation:correctEffect .6s ease}
-        .question.incorrect-flash{animation:incorrectEffect .5s ease}
-        .score-display.score-flash{animation:scoreEffect .6s ease}
-        .buttons button:disabled{opacity:.6;cursor:not-allowed}
-        .result-score{font-size:3em;font-weight:bold;color:#007bff;margin-bottom:10px}
-        .result-details{font-size:1.2em;color:#666;margin-bottom:30px}
-        .stats{display:flex;justify-content:space-around;margin-top:20px;margin-bottom:30px;padding:15px;background:#f8f9fa;border-radius:4px;border:1px solid #e9ecef}
-        .stat-item{text-align:center}.stat-value{font-size:1.5em;font-weight:bold;display:block}.stat-label{font-size:.9em;opacity:.8}
-        .section{margin-bottom:40px}
-        
-        /* 모바일 반응형 */
-        @media (max-width: 480px) {
-            .container{min-width:auto;width:90%;padding:20px}
-            h1{font-size:2em}
-            .mode-btn{padding:15px 25px;font-size:1.2em}
-            .flex-center{flex-direction:column;gap:15px}
-            .special-modes{flex-direction:column;align-items:center}
-            .time-display{font-size:1.5em}
-            .question{font-size:1.5em}
-            input[type="number"]{width:150px;font-size:1.2em;padding:10px}
-            .buttons{flex-direction:column;align-items:center}
-            .stats{flex-direction:column;gap:10px}
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            background-color: #111827;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .info {
+            color: white;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .score-board {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .player1-score {
+            color: #60a5fa;
+        }
+
+        .player2-score {
+            color: #f87171;
+        }
+
+        .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            font-size: 13px;
+            margin-bottom: 10px;
+        }
+
+        .control-p1 {
+            color: #60a5fa;
+        }
+
+        .control-p2 {
+            color: #f87171;
+        }
+
+        .start-hint {
+            color: #fbbf24;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        .tip {
+            color: #d1d5db;
+            margin-top: 8px;
+            font-size: 12px;
+        }
+
+        .canvas-wrapper {
+            border: 4px solid white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 20px 25px rgba(0, 0, 0, 0.5);
+            background-color: #000;
+        }
+
+        canvas {
+            display: block;
+            background-color: #000;
+            image-rendering: crisp-edges;
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 10px 24px;
+            background-color: #eab308;
+            color: #111827;
+            font-weight: bold;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #ca8a04;
+        }
+
+        button:active {
+            transform: scale(0.98);
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div id="modeScreen" class="screen active">
-            <h1>연산 퀴즈</h1>
-            <div class="flex-center">
-                <button class="mode-btn" onclick="selectMode('single')">개인 모드</button>
-                <button class="mode-btn" onclick="selectMode('multi')">멀티 모드</button>
+        <div class="info">
+            <h1>⚽ 탑뷰 축구 게임 ⚽</h1>
+            <div class="score-board">
+                <div class="player1-score">플레이어 1: <span id="scoreLeft">0</span></div>
+                <div class="player2-score">플레이어 2: <span id="scoreRight">0</span></div>
             </div>
-            <div class="development-notice" id="developmentNotice">아직 개발 중인 기능입니다</div>
-        </div>
-
-        <div id="startScreen" class="screen">
-            <h1>연산 퀴즈</h1>
-            <div class="section">
-                <div class="flex-center">
-                    <button class="difficulty-btn active" onclick="setDifficulty('easy')">쉬움</button>
-                    <button class="difficulty-btn" onclick="setDifficulty('medium')">중간</button>
-                    <button class="difficulty-btn" onclick="setDifficulty('hard')">어려움</button>
-                </div>
-            </div>
-            <div class="section special-modes">
-                <button class="special-btn hardcore-btn" onclick="toggleHardcore()">
-                    <div>하드코어 모드 OFF</div>
-                    <div style="font-size:0.8em;opacity:0.8;margin-top:3px">문제마다 3초 제한</div>
-                </button>
-                <button class="special-btn middle-btn" onclick="toggleMiddle()">
-                    <div>중등 모드 OFF</div>
-                    <div style="font-size:0.8em;opacity:0.8;margin-top:3px">제곱, 루트 포함</div>
-                </button>
-            </div>
-            <div class="section">
-                <div class="time-control">
-                    <div class="time-display" id="timeDisplay">1분</div>
-                    <div class="time-btn-group">
-                        <button class="time-btn" id="timeUpBtn">▲</button>
-                        <button class="time-btn" id="timeDownBtn">▼</button>
-                    </div>
-                </div>
-            </div>
-            <div class="section">
-                <button class="secondary-btn" onclick="goToModeSelection()">모드 선택</button>
-                <button class="success-btn" onclick="startGame()">퀴즈 시작</button>
+            <div class="controls">
+                <div class="control-p1">플레이어 1: W/A/S/D 이동, C 스프린트</div>
+                <div class="control-p2">플레이어 2: 화살표 키 이동, Shift 스프린트</div>
+                <div id="startHint" class="start-hint">W 또는 ↑ 키를 눌러 시작!</div>
+                <div class="tip">💡 스프린트로 빠르게 이동하고 강하게 차세요! (스태미나 소모)</div>
             </div>
         </div>
-
-        <div id="gameScreen" class="screen">
-            <div class="game-header">
-                <div class="timer" id="timer">1:00</div>
-                <div>
-                    <span id="hardcoreIndicator" class="indicator hardcore-indicator" style="display:none">하드코어</span>
-                    <span id="middleIndicator" class="indicator middle-indicator" style="display:none">중등</span>
-                </div>
-            </div>
-            <div class="question card" id="question">문제를 불러오는 중...</div>
-            <div class="question-timer" id="questionTimer" style="display:none"></div>
-            <div class="input-section">
-                <input type="number" id="answer" placeholder="답을 입력하세요" autocomplete="off">
-            </div>
-            <div class="buttons">
-                <button class="primary-btn" onclick="checkAnswer()">정답 확인</button>
-                <button class="secondary-btn" onclick="skipQuestion()">다음 문제</button>
-            </div>
-            <div class="score-display" id="score-display">점수: <span id="score">0</span></div>
-            <div class="feedback" id="feedback"></div>
+        <div class="canvas-wrapper">
+            <canvas id="gameCanvas" width="1056" height="792"></canvas>
         </div>
-
-        <div id="resultScreen" class="screen">
-            <h1>퀴즈 결과</h1>
-            <div class="card">
-                <div class="result-score" id="finalScore">0점</div>
-                <div class="result-details" id="resultDetails"></div>
-                <div style="font-size:1.1em;color:#666;margin-top:10px;" id="difficultyInfo"></div>
-            </div>
-            <div class="stats">
-                <div class="stat-item">
-                    <span class="stat-value" id="totalQuestions">0</span>
-                    <span class="stat-label">총 문제</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-value" id="correctAnswers">0</span>
-                    <span class="stat-label">정답</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-value" id="accuracy">0%</span>
-                    <span class="stat-label">정답률</span>
-                </div>
-            </div>
-            <button class="primary-btn" onclick="goToStart()">다시 시작</button>
-        </div>
+        <button onclick="resetGame()">게임 초기화</button>
     </div>
 
     <script>
-        let s = {sc:0,tq:0,ca:0,df:'easy',gt:60,tl:0,gtm:null,gm:'single',ia:false,ih:false,im:false,qtl:0,qt:null,tat:null,tati:null};
-        const ops = ['+','-','×','÷'];
-        let cq = {};
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        // 기본 크기
+        const SCALE = 0.66;
+        const CANVAS_WIDTH = 1600 * SCALE;
+        const CANVAS_HEIGHT = 1200 * SCALE;
 
-        function selectMode(m) {
-            const dn = document.getElementById('developmentNotice');
-            if (m === 'single') {
-                s.gm = 'single';
-                dn.style.display = 'none';
-                showScreen('modeScreen', 'startScreen');
-            } else {
-                s.gm = 'multi';
-                dn.style.display = 'block';
-                setTimeout(() => dn.style.display = 'none', 3000);
+        let score = { left: 0, right: 0 };
+        let gameStarted = false;
+        let keys = {};
+
+        const game = {
+            player1: { x: 400 * SCALE, y: 600 * SCALE, stamina: 100, sprinting: false },
+            player2: { x: 1200 * SCALE, y: 600 * SCALE, stamina: 100, sprinting: false },
+            ball: { x: 800 * SCALE, y: 600 * SCALE, vx: 0, vy: 0 },
+            moveSpeed: 3.5 * SCALE,
+            sprintSpeed: 6 * SCALE,
+            ballRadius: 12 * SCALE,
+            playerRadius: 20 * SCALE,
+            fieldWidth: 1600 * SCALE,
+            fieldHeight: 1200 * SCALE,
+            goalWidth: 180 * SCALE,
+            goalDepth: 40 * SCALE,
+            maxStamina: 100,
+            staminaDrainRate: 0.3,
+            staminaKickCost: 25,
+            staminaRegenRate: 0.15
+        };
+
+        window.addEventListener('keydown', (e) => {
+            keys[e.key] = true;
+            if (!gameStarted && (e.key === 'w' || e.key === 'W' || e.key === 'ArrowUp')) {
+                gameStarted = true;
+                document.getElementById('startHint').style.display = 'none';
             }
-        }
-
-        function showScreen(h, n) {
-            document.getElementById(h).classList.remove('active');
-            document.getElementById(n).classList.add('active');
-        }
-
-        function goToModeSelection() { showScreen('startScreen', 'modeScreen'); }
-        function goToStart() { showScreen('resultScreen', 'startScreen'); }
-
-        function setDifficulty(lv) {
-            s.df = lv;
-            document.querySelectorAll('.difficulty-btn').forEach(btn => btn.classList.remove('active'));
-            document.querySelector(`[onclick="setDifficulty('${lv}')"]`).classList.add('active');
-        }
-
-        function toggleHardcore() {
-            s.ih = !s.ih;
-            updateSpecialButton('.hardcore-btn', s.ih, '하드코어 모드');
-        }
-
-        function toggleMiddle() {
-            s.im = !s.im;
-            updateSpecialButton('.middle-btn', s.im, '중등 모드');
-        }
-
-        function updateSpecialButton(sel, active, name) {
-            const btn = document.querySelector(sel);
-            const desc = sel.includes('hardcore') ? '문제마다 3초 제한' : '제곱, 루트 포함';
-            btn.innerHTML = `<div>${name} ${active ? 'ON' : 'OFF'}</div><div style="font-size:0.8em;opacity:0.8;margin-top:3px">${desc}</div>`;
-            btn.classList.toggle('active', active);
-        }
-
-        function adjustTime(dir) {
-            let nt = s.gt;
-            if (dir === 1) {
-                if (nt < 60) nt += 1;
-                else if (nt < 3600) nt += 60;
-                else nt = Math.min(nt + 3600, 86400);
-            } else {
-                if (nt > 3600) nt -= 3600;
-                else if (nt > 60) nt -= 60;
-                else nt = Math.max(nt - 1, 15);
-            }
-            s.gt = nt;
-            updateTimeDisplay();
-        }
-
-        function startTimeAdjust(dir) {
-            adjustTime(dir);
-            s.tati = setTimeout(() => {
-                s.tat = setInterval(() => adjustTime(dir), 50);
-            }, 300);
-        }
-
-        function stopTimeAdjust() {
-            clearTimeout(s.tati);
-            clearInterval(s.tat);
-        }
-
-        function updateTimeDisplay() {
-            const h = Math.floor(s.gt / 3600), m = Math.floor((s.gt % 3600) / 60), sec = s.gt % 60;
-            document.getElementById('timeDisplay').textContent = h > 0 ? `${h}시간${m > 0 ? ` ${m}분` : ''}` : m > 0 ? `${m}분` : `${sec}초`;
-        }
-
-        // 모바일 호환 시간 조정 버튼 이벤트 리스너
-        function initTimeButtons() {
-            const upBtn = document.getElementById('timeUpBtn');
-            const downBtn = document.getElementById('timeDownBtn');
-
-            // 마우스 이벤트 (데스크톱)
-            upBtn.addEventListener('mousedown', () => startTimeAdjust(1));
-            upBtn.addEventListener('mouseup', stopTimeAdjust);
-            upBtn.addEventListener('mouseleave', stopTimeAdjust);
-
-            downBtn.addEventListener('mousedown', () => startTimeAdjust(-1));
-            downBtn.addEventListener('mouseup', stopTimeAdjust);
-            downBtn.addEventListener('mouseleave', stopTimeAdjust);
-
-            // 터치 이벤트 (모바일)
-            upBtn.addEventListener('touchstart', (e) => {
-                e.preventDefault();
-                startTimeAdjust(1);
-            });
-            upBtn.addEventListener('touchend', (e) => {
-                e.preventDefault();
-                stopTimeAdjust();
-            });
-            upBtn.addEventListener('touchcancel', (e) => {
-                e.preventDefault();
-                stopTimeAdjust();
-            });
-
-            downBtn.addEventListener('touchstart', (e) => {
-                e.preventDefault();
-                startTimeAdjust(-1);
-            });
-            downBtn.addEventListener('touchend', (e) => {
-                e.preventDefault();
-                stopTimeAdjust();
-            });
-            downBtn.addEventListener('touchcancel', (e) => {
-                e.preventDefault();
-                stopTimeAdjust();
-            });
-        }
-
-        function startGame() {
-            showScreen('startScreen', 'gameScreen');
-            s.sc = s.tq = s.ca = 0;
-            s.tl = s.gt;
-            updateIndicators();
-            updateTimerDisplay();
-            s.gtm = setInterval(() => {
-                if (--s.tl <= 0) endGame();
-                else updateTimerDisplay();
-            }, 1000);
-            generateQuestion();
-        }
-
-        function updateIndicators() {
-            document.getElementById('hardcoreIndicator').style.display = s.ih ? 'inline' : 'none';
-            document.getElementById('middleIndicator').style.display = s.im ? 'inline' : 'none';
-            document.getElementById('questionTimer').style.display = s.ih ? 'block' : 'none';
-        }
-
-        function updateTimerDisplay() {
-            const h = Math.floor(s.tl / 3600), m = Math.floor((s.tl % 3600) / 60), sec = s.tl % 60;
-            document.getElementById('timer').textContent = h > 0 ? `${h}:${m.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}` : `${m}:${sec.toString().padStart(2, '0')}`;
-        }
-
-        function generateQuestion() {
-            let op, n1, n2, ans;
-            
-            if (s.im && Math.random() < 0.3) {
-                if (Math.random() < 0.5) {
-                    let range;
-                    if (s.df === 'easy') {
-                        range = 12;
-                    } else if (s.df === 'medium') {
-                        range = 15;
-                    } else {
-                        range = 99;
-                    }
-                    n1 = Math.floor(Math.random() * range) + 1;
-                    if (s.df === 'hard' && n1 < 10) n1 += 10;
-                    ans = n1 * n1;
-                    cq = {num1: n1, num2: null, operator: '²', answer: ans};
-                    document.getElementById('question').textContent = `${n1}² = ?`;
-                } else {
-                    let ps;
-                    if (s.df === 'easy') {
-                        ps = [1,4,9,16,25,36,49,64,81,100];
-                    } else if (s.df === 'medium') {
-                        ps = [1,4,9,16,25,36,49,64,81,100,121,144,169,196,225];
-                    } else {
-                        const squares = [];
-                        for (let i = 20; i <= 99; i++) {
-                            squares.push(i * i);
-                        }
-                        ps = squares;
-                    }
-                    ans = ps[Math.floor(Math.random() * ps.length)];
-                    n1 = Math.sqrt(ans);
-                    cq = {num1: ans, num2: null, operator: 'sqrt', answer: n1};
-                    document.getElementById('question').textContent = `sqrt(${ans}) = ?`;
-                }
-            } else {
-                op = ops[Math.floor(Math.random() * ops.length)];
-                const r = {easy: {a:20,s:30,m:10,d:10}, medium: {a:50,s:50,m:15,d:15}, hard: {a:200,s:300,m:50,d:30}}[s.df];
-                
-                if (op === '+') {
-                    n1 = Math.floor(Math.random() * r.a) + 1;
-                    n2 = Math.floor(Math.random() * r.a) + 1;
-                    ans = n1 + n2;
-                } else if (op === '-') {
-                    n1 = Math.floor(Math.random() * r.s) + (s.df === 'easy' ? 10 : s.df === 'medium' ? 20 : 100);
-                    n2 = Math.floor(Math.random() * n1) + 1;
-                    ans = n1 - n2;
-                } else if (op === '×') {
-                    n1 = Math.floor(Math.random() * r.m) + 1;
-                    n2 = Math.floor(Math.random() * r.m) + 1;
-                    ans = n1 * n2;
-                } else {
-                    n2 = Math.floor(Math.random() * r.d) + 1;
-                    ans = Math.floor(Math.random() * r.d) + 1;
-                    n1 = n2 * ans;
-                }
-                
-                cq = {num1: n1, num2: n2, operator: op, answer: ans};
-                document.getElementById('question').textContent = `${n1} ${op} ${n2} = ?`;
-            }
-
-            resetQuestion();
-            if (s.ih) startQuestionTimer();
-        }
-
-        function resetQuestion() {
-            document.getElementById('answer').value = '';
-            document.getElementById('feedback').textContent = '';
-            document.getElementById('feedback').className = 'feedback';
-            document.getElementById('answer').focus();
-            s.ia = false;
-            document.querySelectorAll('.buttons button').forEach(btn => btn.disabled = false);
-        }
-
-        function startQuestionTimer() {
-            s.qtl = 3;
-            updateQuestionTimer();
-            s.qt = setInterval(() => {
-                if (--s.qtl <= 0) {
-                    clearInterval(s.qt);
-                    autoSkipQuestion();
-                } else updateQuestionTimer();
-            }, 1000);
-        }
-
-        function updateQuestionTimer() {
-            document.getElementById('questionTimer').textContent = `남은 시간: ${s.qtl}초`;
-        }
-
-        function autoSkipQuestion() {
-            if (s.ia) return;
-            processAnswer(null, '시간 초과! 정답은 ' + cq.answer + '였습니다.');
-        }
-
-        function checkAnswer() {
-            if (s.ia) return;
-            clearInterval(s.qt);
-            
-            const ua = parseInt(document.getElementById('answer').value);
-            if (isNaN(ua)) {
-                document.getElementById('feedback').textContent = '숫자를 입력해주세요!';
-                document.getElementById('feedback').className = 'feedback incorrect';
-                return;
-            }
-            
-            const ic = ua === cq.answer;
-            processAnswer(ic, ic ? '정답입니다!' : `틀렸습니다. 정답은 ${cq.answer}입니다.`);
-        }
-
-        function skipQuestion() {
-            if (s.ia) return;
-            clearInterval(s.qt);
-            processAnswer(false, `정답은 ${cq.answer}였습니다.`);
-        }
-
-        function processAnswer(ic, msg) {
-            s.ia = true;
-            document.querySelectorAll('.buttons button').forEach(btn => btn.disabled = true);
-            
-            s.tq++;
-            if (ic) {
-                s.sc += 10;
-                s.ca++;
-                applyEffect('correct');
-            } else applyEffect('incorrect');
-            
-            const fbe = document.getElementById('feedback');
-            fbe.textContent = msg;
-            fbe.className = 'feedback ' + (ic ? 'correct' : 'incorrect');
-            
-            document.getElementById('score').textContent = s.sc;
-            setTimeout(() => generateQuestion(), 1000);
-        }
-
-        function applyEffect(type) {
-            const qe = document.getElementById('question');
-            const se = document.getElementById('score-display');
-            
-            if (type === 'correct') {
-                qe.classList.add('correct-flash');
-                se.classList.add('score-flash');
-                setTimeout(() => {
-                    qe.classList.remove('correct-flash');
-                    se.classList.remove('score-flash');
-                }, 600);
-            } else {
-                qe.classList.add('incorrect-flash');
-                setTimeout(() => qe.classList.remove('incorrect-flash'), 500);
-            }
-        }
-
-        function endGame() {
-            clearInterval(s.gtm);
-            clearInterval(s.qt);
-            showScreen('gameScreen', 'resultScreen');
-            
-            document.getElementById('finalScore').textContent = s.sc + '점';
-            
-            const h = Math.floor(s.gt / 3600), m = Math.floor((s.gt % 3600) / 60), sec = s.gt % 60;
-            let gtt = h > 0 ? `${h}시간${m > 0 ? ` ${m}분` : ''}` : m > 0 ? `${m}분` : `${sec}초`;
-            document.getElementById('resultDetails').textContent = `게임 시간: ${gtt}`;
-            
-            const dft = s.df === 'easy' ? '쉬움' : s.df === 'medium' ? '중간' : '어려움';
-            const modes = (s.ih ? '-하드코어' : '') + (s.im ? '-중등' : '');
-            document.getElementById('difficultyInfo').textContent = `난이도: ${dft}${modes}`;
-            
-            document.getElementById('totalQuestions').textContent = s.tq;
-            document.getElementById('correctAnswers').textContent = s.ca;
-            document.getElementById('accuracy').textContent = (s.tq > 0 ? Math.round((s.ca / s.tq) * 100) : 0) + '%';
-        }
-
-        document.getElementById('answer').addEventListener('keypress', e => {
-            if (e.key === 'Enter') checkAnswer();
         });
 
-        // 페이지 로드 시 초기화
-        document.addEventListener('DOMContentLoaded', function() {
-            updateTimeDisplay();
-            initTimeButtons();
+        window.addEventListener('keyup', (e) => {
+            keys[e.key] = false;
         });
+
+        function checkCircleCollision(c1, c2, r1, r2) {
+            const dx = c1.x - c2.x;
+            const dy = c1.y - c2.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            return dist < r1 + r2;
+        }
+
+        function resetBall() {
+            game.ball.x = game.fieldWidth / 2;
+            game.ball.y = game.fieldHeight / 2;
+            game.ball.vx = 0;
+            game.ball.vy = 0;
+        }
+
+        function resetPlayers() {
+            game.player1.x = 400 * SCALE;
+            game.player1.y = 600 * SCALE;
+            game.player1.stamina = 100;
+            game.player1.sprinting = false;
+            game.player2.x = 1200 * SCALE;
+            game.player2.y = 600 * SCALE;
+            game.player2.stamina = 100;
+            game.player2.sprinting = false;
+        }
+
+        function gameLoop() {
+            if (!gameStarted) return;
+
+            // Sprint 처리
+            game.player1.sprinting = (keys['c'] || keys['C']) && game.player1.stamina > 0;
+            game.player2.sprinting = keys['Shift'] && game.player2.stamina > 0;
+
+            const p1Speed = game.player1.sprinting ? game.sprintSpeed : game.moveSpeed;
+            const p2Speed = game.player2.sprinting ? game.sprintSpeed : game.moveSpeed;
+
+            // 플레이어 1 이동
+            if (keys['a'] && game.player1.x > game.playerRadius) game.player1.x -= p1Speed;
+            if (keys['d'] && game.player1.x < game.fieldWidth - game.playerRadius) game.player1.x += p1Speed;
+            if (keys['w'] && game.player1.y > game.playerRadius) game.player1.y -= p1Speed;
+            if (keys['s'] && game.player1.y < game.fieldHeight - game.playerRadius) game.player1.y += p1Speed;
+
+            // 플레이어 2 이동
+            if (keys['ArrowLeft'] && game.player2.x > game.playerRadius) game.player2.x -= p2Speed;
+            if (keys['ArrowRight'] && game.player2.x < game.fieldWidth - game.playerRadius) game.player2.x += p2Speed;
+            if (keys['ArrowUp'] && game.player2.y > game.playerRadius) game.player2.y -= p2Speed;
+            if (keys['ArrowDown'] && game.player2.y < game.fieldHeight - game.playerRadius) game.player2.y += p2Speed;
+
+            // 스태미나 관리
+            game.player1.stamina = game.player1.sprinting ? 
+                Math.max(0, game.player1.stamina - game.staminaDrainRate) :
+                Math.min(game.maxStamina, game.player1.stamina + game.staminaRegenRate);
+            
+            game.player2.stamina = game.player2.sprinting ? 
+                Math.max(0, game.player2.stamina - game.staminaDrainRate) :
+                Math.min(game.maxStamina, game.player2.stamina + game.staminaRegenRate);
+
+            // 공 물리
+            game.ball.x += game.ball.vx;
+            game.ball.y += game.ball.vy;
+            game.ball.vx *= 0.985;
+            game.ball.vy *= 0.985;
+
+            // 공 벽 충돌
+            if (game.ball.x < game.ballRadius || game.ball.x > game.fieldWidth - game.ballRadius) {
+                game.ball.vx *= -0.8;
+                game.ball.x = game.ball.x < game.ballRadius ? game.ballRadius : game.fieldWidth - game.ballRadius;
+            }
+            if (game.ball.y < game.ballRadius || game.ball.y > game.fieldHeight - game.ballRadius) {
+                game.ball.vy *= -0.8;
+                game.ball.y = game.ball.y < game.ballRadius ? game.ballRadius : game.fieldHeight - game.ballRadius;
+            }
+
+            // 플레이어 1 충돌
+            if (checkCircleCollision(game.ball, game.player1, game.ballRadius, game.playerRadius)) {
+                const angle = Math.atan2(game.ball.y - game.player1.y, game.ball.x - game.player1.x);
+                const baseSpeed = 10 * SCALE;
+                const speed = game.player1.sprinting ? baseSpeed * 1.8 : baseSpeed;
+                game.ball.vx = Math.cos(angle) * speed;
+                game.ball.vy = Math.sin(angle) * speed;
+                
+                if (game.player1.sprinting) {
+                    game.player1.stamina = Math.max(0, game.player1.stamina - game.staminaKickCost);
+                }
+                
+                const dist = Math.sqrt(Math.pow(game.ball.x - game.player1.x, 2) + Math.pow(game.ball.y - game.player1.y, 2));
+                const overlap = game.ballRadius + game.playerRadius - dist;
+                game.ball.x += Math.cos(angle) * overlap;
+                game.ball.y += Math.sin(angle) * overlap;
+            }
+
+            // 플레이어 2 충돌
+            if (checkCircleCollision(game.ball, game.player2, game.ballRadius, game.playerRadius)) {
+                const angle = Math.atan2(game.ball.y - game.player2.y, game.ball.x - game.player2.x);
+                const baseSpeed = 10 * SCALE;
+                const speed = game.player2.sprinting ? baseSpeed * 1.8 : baseSpeed;
+                game.ball.vx = Math.cos(angle) * speed;
+                game.ball.vy = Math.sin(angle) * speed;
+                
+                if (game.player2.sprinting) {
+                    game.player2.stamina = Math.max(0, game.player2.stamina - game.staminaKickCost);
+                }
+                
+                const dist = Math.sqrt(Math.pow(game.ball.x - game.player2.x, 2) + Math.pow(game.ball.y - game.player2.y, 2));
+                const overlap = game.ballRadius + game.playerRadius - dist;
+                game.ball.x += Math.cos(angle) * overlap;
+                game.ball.y += Math.sin(angle) * overlap;
+            }
+
+            // 골 감지
+            const goalTop = (game.fieldHeight - game.goalWidth) / 2;
+            const goalBottom = goalTop + game.goalWidth;
+
+            if (game.ball.x <= game.goalDepth && game.ball.y >= goalTop && game.ball.y <= goalBottom) {
+                score.right++;
+                document.getElementById('scoreRight').textContent = score.right;
+                resetBall();
+                resetPlayers();
+                gameStarted = false;
+                document.getElementById('startHint').style.display = 'block';
+            }
+
+            if (game.ball.x >= game.fieldWidth - game.goalDepth && game.ball.y >= goalTop && game.ball.y <= goalBottom) {
+                score.left++;
+                document.getElementById('scoreLeft').textContent = score.left;
+                resetBall();
+                resetPlayers();
+                gameStarted = false;
+                document.getElementById('startHint').style.display = 'block';
+            }
+
+            // 그리기
+            draw(goalTop, goalBottom);
+        }
+
+        function draw(goalTop, goalBottom) {
+            ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+
+            // 필드 배경
+            ctx.fillStyle = '#2d8a3e';
+            ctx.fillRect(0, 0, game.fieldWidth, game.fieldHeight);
+
+            // 필드 줄무늬
+            ctx.fillStyle = '#248a34';
+            for (let i = 1; i < 10; i += 2) {
+                ctx.fillRect(i * (game.fieldWidth / 10), 0, game.fieldWidth / 10, game.fieldHeight);
+            }
+
+            // 필드 테두리
+            ctx.strokeStyle = '#fff';
+            ctx.lineWidth = 5 * SCALE;
+            ctx.strokeRect(3, 3, game.fieldWidth - 6, game.fieldHeight - 6);
+
+            // 센터라인
+            ctx.lineWidth = 3 * SCALE;
+            ctx.beginPath();
+            ctx.moveTo(game.fieldWidth / 2, 0);
+            ctx.lineTo(game.fieldWidth / 2, game.fieldHeight);
+            ctx.stroke();
+
+            // 센터 원
+            ctx.beginPath();
+            ctx.arc(game.fieldWidth / 2, game.fieldHeight / 2, 100 * SCALE, 0, Math.PI * 2);
+            ctx.stroke();
+
+            // 센터 점
+            ctx.fillStyle = '#fff';
+            ctx.beginPath();
+            ctx.arc(game.fieldWidth / 2, game.fieldHeight / 2, 5 * SCALE, 0, Math.PI * 2);
+            ctx.fill();
+
+            // 골
+            ctx.fillStyle = '#1565c0';
+            ctx.fillRect(0, goalTop, game.goalDepth, game.goalWidth);
+            ctx.strokeStyle = '#fff';
+            ctx.lineWidth = 4 * SCALE;
+            ctx.strokeRect(0, goalTop, game.goalDepth, game.goalWidth);
+
+            ctx.fillStyle = '#c62828';
+            ctx.fillRect(game.fieldWidth - game.goalDepth, goalTop, game.goalDepth, game.goalWidth);
+            ctx.strokeRect(game.fieldWidth - game.goalDepth, goalTop, game.goalDepth, game.goalWidth);
+
+            // 골 에어리어
+            ctx.lineWidth = 3 * SCALE;
+            ctx.strokeRect(0, goalTop - 60 * SCALE, 120 * SCALE, game.goalWidth + 120 * SCALE);
+            ctx.strokeRect(game.fieldWidth - 120 * SCALE, goalTop - 60 * SCALE, 120 * SCALE, game.goalWidth + 120 * SCALE);
+
+            // 플레이어 1 (파랑)
+            if (game.player1.sprinting) {
+                ctx.shadowColor = '#2196F3';
+                ctx.shadowBlur = 30 * SCALE;
+            }
+            ctx.fillStyle = '#2196F3';
+            ctx.beginPath();
+            ctx.arc(game.player1.x, game.player1.y, game.playerRadius, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.shadowBlur = 0;
+            ctx.strokeStyle = '#0d47a1';
+            ctx.lineWidth = 3 * SCALE;
+            ctx.stroke();
+            
+            ctx.fillStyle = '#fff';
+            ctx.beginPath();
+            ctx.arc(game.player1.x, game.player1.y - 8 * SCALE, 3 * SCALE, 0, Math.PI * 2);
+            ctx.fill();
+            
+            ctx.font = `bold ${16 * SCALE}px Arial`;
+            ctx.textAlign = 'center';
+            ctx.fillText('P1', game.player1.x, game.player1.y + 6 * SCALE);
+
+            // 플레이어 2 (빨강)
+            if (game.player2.sprinting) {
+                ctx.shadowColor = '#F44336';
+                ctx.shadowBlur = 30 * SCALE;
+            }
+            ctx.fillStyle = '#F44336';
+            ctx.beginPath();
+            ctx.arc(game.player2.x, game.player2.y, game.playerRadius, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.shadowBlur = 0;
+            ctx.strokeStyle = '#b71c1c';
+            ctx.lineWidth = 3 * SCALE;
+            ctx.stroke();
+            
+            ctx.fillStyle = '#fff';
+            ctx.beginPath();
+            ctx.arc(game.player2.x, game.player2.y - 8 * SCALE, 3 * SCALE, 0, Math.PI * 2);
+            ctx.fill();
+            
+            ctx.fillText('P2', game.player2.x, game.player2.y + 6 * SCALE);
+
+            // 공
+            ctx.fillStyle = '#fff';
+            ctx.beginPath();
+            ctx.arc(game.ball.x, game.ball.y, game.ballRadius, 0, Math.PI * 2);
+            ctx.fill();
+            
+            ctx.strokeStyle = '#000';
+            ctx.lineWidth = 2 * SCALE;
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(game.ball.x - 6 * SCALE, game.ball.y);
+            ctx.lineTo(game.ball.x + 6 * SCALE, game.ball.y);
+            ctx.moveTo(game.ball.x, game.ball.y - 6 * SCALE);
+            ctx.lineTo(game.ball.x, game.ball.y + 6 * SCALE);
+            ctx.stroke();
+
+            // 스태미나 바
+            const barWidth = 150 * SCALE;
+            const barHeight = 20 * SCALE;
+            
+            // 플레이어 1 스태미나
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+            ctx.fillRect(game.player1.x - barWidth / 2, game.player1.y - 50 * SCALE, barWidth, barHeight);
+            ctx.fillStyle = game.player1.stamina > 30 ? '#4CAF50' : '#F44336';
+            ctx.fillRect(game.player1.x - barWidth / 2, game.player1.y - 50 * SCALE, (game.player1.stamina / game.maxStamina) * barWidth, barHeight);
+            ctx.strokeStyle = '#fff';
+            ctx.lineWidth = 2 * SCALE;
+            ctx.strokeRect(game.player1.x - barWidth / 2, game.player1.y - 50 * SCALE, barWidth, barHeight);
+
+            // 플레이어 2 스태미나
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+            ctx.fillRect(game.player2.x - barWidth / 2, game.player2.y - 50 * SCALE, barWidth, barHeight);
+            ctx.fillStyle = game.player2.stamina > 30 ? '#4CAF50' : '#F44336';
+            ctx.fillRect(game.player2.x - barWidth / 2, game.player2.y - 50 * SCALE, (game.player2.stamina / game.maxStamina) * barWidth, barHeight);
+            ctx.strokeStyle = '#fff';
+            ctx.lineWidth = 2 * SCALE;
+            ctx.strokeRect(game.player2.x - barWidth / 2, game.player2.y - 50 * SCALE, barWidth, barHeight);
+        }
+
+        function resetGame() {
+            score = { left: 0, right: 0 };
+            document.getElementById('scoreLeft').textContent = '0';
+            document.getElementById('scoreRight').textContent = '0';
+            gameStarted = false;
+            document.getElementById('startHint').style.display = 'block';
+            game.player1 = { x: 400 * SCALE, y: 600 * SCALE, stamina: 100, sprinting: false };
+            game.player2 = { x: 1200 * SCALE, y: 600 * SCALE, stamina: 100, sprinting: false };
+            game.ball = { x: 800 * SCALE, y: 600 * SCALE, vx: 0, vy: 0 };
+        }
+
+        // 게임 루프 시작
+        setInterval(gameLoop, 1000 / 60);
+        
+        // 초기 화면 그리기
+        draw((game.fieldHeight - game.goalWidth) / 2, (game.fieldHeight - game.goalWidth) / 2 + game.goalWidth);
     </script>
 </body>
 </html>
