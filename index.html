@@ -171,12 +171,14 @@
             playerRadius: 20 * SCALE,
             fieldWidth: 1600 * SCALE,
             fieldHeight: 1200 * SCALE,
-            goalWidth: 180 * SCALE,
+            goalWidth: 280 * SCALE,
             goalDepth: 40 * SCALE,
             maxStamina: 100,
             staminaDrainRate: 0.3,
             staminaKickCost: 25,
-            staminaRegenRate: 0.15
+            staminaRegenRate: 0.15,
+            lastScoredTeam: null,
+            glowIntensity: 0
         };
 
         window.addEventListener('keydown', (e) => {
@@ -303,8 +305,10 @@
             const goalTop = (game.fieldHeight - game.goalWidth) / 2;
             const goalBottom = goalTop + game.goalWidth;
 
-            if (game.ball.x <= game.goalDepth && game.ball.y >= goalTop && game.ball.y <= goalBottom) {
+            if (game.ball.x < 0 && game.ball.y >= goalTop && game.ball.y <= goalBottom) {
                 score.right++;
+                game.lastScoredTeam = 'right';
+                game.glowIntensity = 100;
                 document.getElementById('scoreRight').textContent = score.right;
                 resetBall();
                 resetPlayers();
@@ -312,8 +316,10 @@
                 document.getElementById('startHint').style.display = 'block';
             }
 
-            if (game.ball.x >= game.fieldWidth - game.goalDepth && game.ball.y >= goalTop && game.ball.y <= goalBottom) {
+            if (game.ball.x > game.fieldWidth && game.ball.y >= goalTop && game.ball.y <= goalBottom) {
                 score.left++;
+                game.lastScoredTeam = 'left';
+                game.glowIntensity = 100;
                 document.getElementById('scoreLeft').textContent = score.left;
                 resetBall();
                 resetPlayers();
@@ -327,6 +333,24 @@
 
         function draw(goalTop, goalBottom) {
             ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+
+            // 글로우 효과
+            if (game.glowIntensity > 0) {
+                if (game.lastScoredTeam === 'left') {
+                    const gradient = ctx.createLinearGradient(0, 0, game.fieldWidth * 0.3, 0);
+                    gradient.addColorStop(0, `rgba(33, 150, 243, ${game.glowIntensity * 0.003})`);
+                    gradient.addColorStop(1, 'rgba(33, 150, 243, 0)');
+                    ctx.fillStyle = gradient;
+                    ctx.fillRect(0, 0, game.fieldWidth * 0.3, game.fieldHeight);
+                } else if (game.lastScoredTeam === 'right') {
+                    const gradient = ctx.createLinearGradient(game.fieldWidth, 0, game.fieldWidth * 0.7, 0);
+                    gradient.addColorStop(0, `rgba(244, 67, 54, ${game.glowIntensity * 0.003})`);
+                    gradient.addColorStop(1, 'rgba(244, 67, 54, 0)');
+                    ctx.fillStyle = gradient;
+                    ctx.fillRect(game.fieldWidth * 0.7, 0, game.fieldWidth * 0.3, game.fieldHeight);
+                }
+                game.glowIntensity -= 2;
+            }
 
             // 필드 배경
             ctx.fillStyle = '#2d8a3e';
@@ -469,6 +493,8 @@
             game.player1 = { x: 400 * SCALE, y: 600 * SCALE, stamina: 100, sprinting: false };
             game.player2 = { x: 1200 * SCALE, y: 600 * SCALE, stamina: 100, sprinting: false };
             game.ball = { x: 800 * SCALE, y: 600 * SCALE, vx: 0, vy: 0 };
+            game.lastScoredTeam = null;
+            game.glowIntensity = 0;
         }
 
         // 게임 루프 시작
