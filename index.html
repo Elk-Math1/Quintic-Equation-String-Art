@@ -1,507 +1,551 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>탑뷰 축구 게임</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>5차 방정식 스트링아트</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:-apple-system,'Noto Sans KR',sans-serif;background:#f8f7f4;color:#1a1a18;font-size:13px;overflow:hidden;height:100vh;}
+.app{display:flex;height:100vh;}
 
-        html, body {
-            width: 100%;
-            height: 100%;
-            background-color: #111827;
-            font-family: Arial, sans-serif;
-        }
+.lp{width:280px;flex-shrink:0;border-right:0.5px solid rgba(0,0,0,0.18);display:flex;flex-direction:column;background:#fff;}
+.ph{padding:12px 13px 9px;border-bottom:0.5px solid rgba(0,0,0,0.1);}
+.ph h1{font-size:12.5px;font-weight:500;margin-bottom:3px;}
+.ph p{font-size:10.5px;color:#6b6b67;line-height:1.4;}
+.sctrl{padding:7px 10px;border-bottom:0.5px solid rgba(0,0,0,0.1);display:flex;flex-direction:column;gap:5px;}
+.sctrl input{width:100%;border:0.5px solid rgba(0,0,0,0.18);border-radius:5px;padding:4px 8px;font-size:11px;background:#f8f7f4;color:#1a1a18;outline:none;}
+.sctrl input:focus{border-color:#185FA5;}
+.chaps{display:flex;gap:3px;flex-wrap:wrap;}
+.cb{font-size:10px;padding:2px 7px;border-radius:9px;cursor:pointer;border:0.5px solid rgba(0,0,0,0.18);background:#fff;color:#6b6b67;}
+.cb.on{background:#1a1a18;color:#fff;border-color:#1a1a18;}
+.drow{display:flex;align-items:center;gap:6px;font-size:11px;color:#6b6b67;}
+.drow select{font-size:11px;padding:2px 5px;border:0.5px solid rgba(0,0,0,0.18);border-radius:4px;background:#fff;color:#1a1a18;outline:none;}
+.tlist{overflow-y:auto;flex:1;}
+.ti{padding:6px 10px;cursor:pointer;border-bottom:0.5px solid rgba(0,0,0,0.07);display:flex;align-items:flex-start;gap:6px;}
+.ti:hover{background:#f8f7f4;}
+.ti.sel{background:#E6F1FB;}
+.tdot{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:4px;}
+.tinf{flex:1;min-width:0;}
+.tiid{font-size:11px;font-weight:500;}
+.tinm{font-size:10px;color:#6b6b67;margin-top:1px;}
+.titags{display:flex;gap:2px;flex-wrap:wrap;margin-top:2px;}
+.tag{font-size:9.5px;padding:1px 5px;border-radius:5px;border:0.5px solid transparent;}
+.tu{background:#E6F1FB;color:#0C447C;border-color:#85B7EB;}
+.tb2{background:#EEEDFE;color:#3C3489;border-color:#AFA9EC;}
+.detail{padding:9px 11px 10px;border-top:0.5px solid rgba(0,0,0,0.1);font-size:11px;min-height:70px;max-height:150px;overflow-y:auto;background:#f8f7f4;}
+.detail h4{font-size:11px;font-weight:500;margin-bottom:5px;}
+.ddr{display:flex;gap:5px;margin-bottom:3px;align-items:flex-start;}
+.ddl{color:#6b6b67;min-width:50px;font-size:10px;flex-shrink:0;padding-top:1px;}
+.ddtags{display:flex;flex-wrap:wrap;gap:2px;}
+.ss{padding:6px 10px;border-top:0.5px solid rgba(0,0,0,0.1);}
+.ss h5{font-size:10px;font-weight:500;color:#6b6b67;margin-bottom:4px;}
+.sl{display:flex;flex-wrap:wrap;gap:3px;}
+.sp{font-size:9.5px;padding:1px 6px;border-radius:6px;background:#f1f0eb;color:#6b6b67;border:0.5px solid rgba(0,0,0,0.18);cursor:pointer;}
+.sp:hover{background:#e0e0dc;}
+.sp.sel{background:#f0eeff;color:#3C3489;border-color:#AFA9EC;}
 
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        .container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-        }
-
-        .info {
-            color: white;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-
-        h1 {
-            font-size: 32px;
-            font-weight: bold;
-            margin-bottom: 15px;
-        }
-
-        .score-board {
-            display: flex;
-            justify-content: center;
-            gap: 40px;
-            font-size: 20px;
-            font-weight: bold;
-            margin-bottom: 15px;
-        }
-
-        .player1-score {
-            color: #60a5fa;
-        }
-
-        .player2-score {
-            color: #f87171;
-        }
-
-        .controls {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-            font-size: 13px;
-            margin-bottom: 10px;
-        }
-
-        .control-p1 {
-            color: #60a5fa;
-        }
-
-        .control-p2 {
-            color: #f87171;
-        }
-
-        .start-hint {
-            color: #fbbf24;
-            margin-top: 10px;
-            font-weight: bold;
-        }
-
-        .tip {
-            color: #d1d5db;
-            margin-top: 8px;
-            font-size: 12px;
-        }
-
-        .canvas-wrapper {
-            border: 4px solid white;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 20px 25px rgba(0, 0, 0, 0.5);
-            background-color: #000;
-        }
-
-        canvas {
-            display: block;
-            background-color: #000;
-            image-rendering: crisp-edges;
-        }
-
-        button {
-            margin-top: 20px;
-            padding: 10px 24px;
-            background-color: #eab308;
-            color: #111827;
-            font-weight: bold;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: background-color 0.3s;
-        }
-
-        button:hover {
-            background-color: #ca8a04;
-        }
-
-        button:active {
-            transform: scale(0.98);
-        }
-    </style>
+.mp{flex:1;position:relative;overflow:hidden;background:#f8f7f4;}
+.toolbar{position:absolute;top:8px;right:8px;z-index:10;display:flex;gap:4px;}
+.mbtn{font-size:11px;padding:2px 9px;border-radius:5px;cursor:pointer;border:0.5px solid rgba(0,0,0,0.18);background:#fff;color:#6b6b67;}
+.mbtn:hover{color:#1a1a18;}
+.hint{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);font-size:10px;color:#9b9b96;background:#fff;padding:2px 9px;border-radius:9px;border:0.5px solid rgba(0,0,0,0.1);white-space:nowrap;}
+.dlgd{position:absolute;bottom:8px;right:8px;z-index:10;background:#fff;border:0.5px solid rgba(0,0,0,0.18);border-radius:6px;padding:6px 9px;font-size:10px;display:none;}
+.dlgd .dt{font-weight:500;margin-bottom:4px;}
+.dlgrow{display:flex;align-items:center;gap:5px;margin-bottom:2px;color:#6b6b67;}
+.dlgsw{width:20px;height:3px;border-radius:2px;}
+svg{width:100%;height:100%;cursor:grab;}
+svg:active{cursor:grabbing;}
+</style>
 </head>
 <body>
-    <div class="container">
-        <div class="info">
-            <h1>⚽ 탑뷰 축구 게임 ⚽</h1>
-            <div class="score-board">
-                <div class="player1-score">플레이어 1: <span id="scoreLeft">0</span></div>
-                <div class="player2-score">플레이어 2: <span id="scoreRight">0</span></div>
-            </div>
-            <div class="controls">
-                <div class="control-p1">플레이어 1: W/A/S/D 이동, C 스프린트</div>
-                <div class="control-p2">플레이어 2: 화살표 키 이동, Shift 스프린트</div>
-                <div id="startHint" class="start-hint">W 또는 ↑ 키를 눌러 시작!</div>
-                <div class="tip">💡 스프린트로 빠르게 이동하고 강하게 차세요! (스태미나 소모)</div>
-            </div>
-        </div>
-        <div class="canvas-wrapper">
-            <canvas id="gameCanvas" width="1056" height="792"></canvas>
-        </div>
-        <button onclick="resetGame()">게임 초기화</button>
+<div class="app">
+<div class="lp">
+  <div class="ph">
+  </div>
+  <div class="sctrl">
+    <div class="drow">
+      <span style="color:#1a6dd4">사용</span>
+      <input id="depU" type="number" min="1" max="99" placeholder="" style="width:46px;padding:2px 5px;border:0.5px solid rgba(0,0,0,0.18);border-radius:4px;font-size:11px;background:#fff;color:#1a1a18;outline:none;" oninput="if(SEL)highlight()">
+      <span style="color:#6b21e8;margin-left:4px">피사용</span>
+      <input id="depB" type="number" min="1" max="99" placeholder="" style="width:46px;padding:2px 5px;border:0.5px solid rgba(0,0,0,0.18);border-radius:4px;font-size:11px;background:#fff;color:#1a1a18;outline:none;" oninput="if(SEL)highlight()">
+      <span style="font-size:10px;color:#9b9b96">(빈칸=∞)</span>
     </div>
+  </div>
+  <div class="tlist" id="tlist"></div>
+  <div class="detail" id="detail"></div>
+</div>
 
-    <script>
-        const canvas = document.getElementById('gameCanvas');
-        const ctx = canvas.getContext('2d');
-        
-        // 기본 크기
-        const SCALE = 0.66;
-        const CANVAS_WIDTH = 1600 * SCALE;
-        const CANVAS_HEIGHT = 1200 * SCALE;
+<div class="mp">
+  <div class="toolbar">
+    <button class="mbtn" onclick="rv()">뷰 초기화</button>
+    <button class="mbtn" onclick="zi()">＋</button>
+    <button class="mbtn" onclick="zo()">－</button>
+  </div>
+  <svg id="sv">
+    <defs>
+      <marker id="a0" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0L0,6L6,3z" fill="#c0c0bb"/></marker>
+      <marker id="au1" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0L0,6L6,3z" fill="#1a6dd4"/></marker>
+      <marker id="au2" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0L0,6L6,3z" fill="#5b9fe8"/></marker>
+      <marker id="au3" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0L0,6L6,3z" fill="#9fc8f5"/></marker>
+      <marker id="ab1" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0L0,6L6,3z" fill="#6b21e8"/></marker>
+      <marker id="ab2" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0L0,6L6,3z" fill="#9d5ef0"/></marker>
+      <marker id="ab3" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0L0,6L6,3z" fill="#c49df8"/></marker>
+    </defs>
+    <g id="mr"></g>
+  </svg>
 
-        let score = { left: 0, right: 0 };
-        let gameStarted = false;
-        let keys = {};
 
-        const game = {
-            player1: { x: 400 * SCALE, y: 600 * SCALE, stamina: 100, sprinting: false },
-            player2: { x: 1200 * SCALE, y: 600 * SCALE, stamina: 100, sprinting: false },
-            ball: { x: 800 * SCALE, y: 600 * SCALE, vx: 0, vy: 0 },
-            moveSpeed: 3.5 * SCALE,
-            sprintSpeed: 6 * SCALE,
-            ballRadius: 12 * SCALE,
-            playerRadius: 20 * SCALE,
-            fieldWidth: 1600 * SCALE,
-            fieldHeight: 1200 * SCALE,
-            goalWidth: 280 * SCALE,
-            goalDepth: 40 * SCALE,
-            maxStamina: 100,
-            staminaDrainRate: 0.3,
-            staminaKickCost: 25,
-            staminaRegenRate: 0.15,
-            lastScoredTeam: null,
-            glowIntensity: 0
-        };
+</div>
+</div>
 
-        window.addEventListener('keydown', (e) => {
-            keys[e.key] = true;
-            if (!gameStarted && (e.key === 'w' || e.key === 'W' || e.key === 'ArrowUp')) {
-                gameStarted = true;
-                document.getElementById('startHint').style.display = 'none';
-            }
-        });
+<script>
+const T=[
+ {id:'1.1',n:'호제법의 원리',d:[],s:false},
+ {id:'1.2',n:'일차 부정방정식',d:[],s:false},
+ {id:'1.3',n:'합동식의 성질',d:[],s:false},
+ {id:'1.4',n:'순환군의 부분군',d:[],s:false},
+ {id:'1.5',n:'중국 나머지 정리',d:['1.2'],s:false},
+ {id:'1.6',n:'Z/mZ의 분해',d:['1.5','1.1','1.2'],s:false},
+ {id:'1.7',n:'기약잉여류군의 분해',d:['1.3','1.5','1.6'],s:false},
+ {id:'1.8',n:'기약잉여류군의 원소 개수',d:['1.7'],s:false},
+ {id:'1.9',n:'나머지정리와 인수정리 (Fp)',d:[],s:false},
+ {id:'1.10',n:'Fp 방정식 해의 개수',d:['1.9'],s:false},
+ {id:'1.11',n:'정수가 생성하는 순환군',d:['1.3'],s:false},
+ {id:'1.12',n:'원시근의 존재',d:['1.10','1.11','1.3'],s:false},
+ {id:'1.13',n:'Z/pZ* 는 순환군',d:[],s:false},
+ {id:'1.14',n:'Z/2ⁿZ* 의 구조',d:['1.11','1.3'],s:false},
+ {id:'1.15',n:'Z/pⁿZ* 의 구조',d:['1.11','1.3','1.12'],s:false},
+ {id:'1.16',n:'기약잉여류군의 구조',d:['1.7','1.14','1.13','1.15'],s:false},
+ {id:'2.1',n:'g에 의한 교체',d:[],s:false},
+ {id:'2.2',n:'g가 부분집합에 작용',d:['2.1'],s:false},
+ {id:'2.3',n:'잉여류',d:['2.1','2.2'],s:false},
+ {id:'2.4',n:'라그랑주의 정리',d:['2.3','1.4'],s:false},
+ {id:'2.5',n:'위수제곱은 항등원',d:['2.4'],s:false},
+ {id:'2.6',n:'오일러/페르마의 소정리',d:['2.5','1.8'],s:false},
+ {id:'2.7',n:'부분군의 항등원',d:['2.2'],s:false},
+ {id:'2.8',n:'정규부분군과 잉여군',d:['2.3','2.1'],s:false},
+ {id:'2.9',n:'순환군의 잉여군은 순환군',d:['2.3','2.8'],s:false},
+ {id:'2.10',n:'절반의 부분군은 정규부분군',d:['2.3','2.1'],s:false},
+ {id:'2.11',n:'Im f 는 군',d:[],s:false},
+ {id:'2.12',n:'Ker f는 정규부분군',d:[],s:false},
+ {id:'2.13',n:'준동형정리',d:['2.11','2.12','2.7','2.1'],s:false},
+ {id:'2.14',n:'부분군이기 위한 조건',d:[],s:false},
+ {id:'2.15',n:'부분군의 연산',d:['2.14','2.8'],s:false},
+ {id:'2.16',n:'제2동형정리',d:['2.1','2.8','2.13'],s:false},
+ {id:'2.17',n:'제3동형정리',d:['2.7','2.1','2.8','2.16','2.13'],s:false},
+ {id:'2.18',n:'치환은 호환의 곱',d:[],s:false},
+ {id:'2.19',n:'대칭군의 생성원',d:[],s:false},
+ {id:'2.20',n:'치환의 홀짝 성질',d:['1.3'],s:false},
+ {id:'2.21',n:'교대군',d:['2.18','2.20'],s:false},
+ {id:'2.22',n:'교대군과 대칭군',d:['2.10','2.20','2.3','2.1'],s:false},
+ {id:'2.23',n:'교대군은 삼환의 곱',d:[],s:false},
+ {id:'2.24',n:'교대군의 생성원',d:['2.19'],s:false},
+ {id:'2.25',n:'순환군의 직적은 가해군',d:['2.8'],s:false},
+ {id:'2.26',n:'교대군의 비가해성',d:['2.8','2.21','2.22','2.23','2.24'],s:false},
+ {id:'2.27',n:'교대군 부분군도 가해군',d:['2.8','2.15','2.16','1.4'],s:false},
+ {id:'2.28',n:'대칭군의 비가해성',d:['2.22','2.27','2.26'],s:false},
+ {id:'2.29',n:'준동형사상의 상도 가해군',d:['2.8','2.1','2.13','2.9'],s:false},
+ {id:'2.30',n:'잉여군도 가해군',d:['2.27','2.8','2.1','2.29','2.14','2.17'],s:false},
+ {id:'3.1',n:'대칭식의 기본 정리',d:[],s:false},
+ {id:'3.2',n:'Fp 위의 다항식은 정역이다',d:['1.3'],s:false},
+ {id:'3.3',n:'유리수 계수 다항식의 기약성',d:['3.2'],s:false},
+ {id:'3.4',n:'아이젠슈타인의 판정조건',d:['3.3'],s:false},
+ {id:'3.5',n:'다항식의 1차 부정방정식',d:['1.1'],s:false},
+ {id:'3.6',n:'기약다항식의 성질',d:['3.5'],s:false},
+ {id:'3.7',n:'기약다항식에 의한 체',d:['3.6'],s:false},
+ {id:'4.1',n:'켤레복소수도 해',d:[],s:false},
+ {id:'4.2',n:'복소수 곱셈의 절댓값·편각',d:[],s:false},
+ {id:'4.3',n:'복소수 나눗셈의 절댓값·편각',d:[],s:true},
+ {id:'4.4',n:'복소수의 거듭제곱',d:['4.2'],s:false},
+ {id:'4.5',n:'m의 n제곱근',d:[],s:false},
+ {id:'4.6',n:'복소수의 거듭제곱근',d:['4.4','4.2'],s:false},
+ {id:'4.7',n:'ζ의 원시 n제곱근',d:[],s:false},
+ {id:'4.8',n:'소수 차수의 원분다항식',d:['4.5'],s:false},
+ {id:'4.9',n:'1의 n제곱근의 합',d:['4.8'],s:true},
+ {id:'4.10',n:'대수학의 기본 정리',d:['4.4'],s:false},
+ {id:'4.11',n:'Fp에서의 이항정리',d:['2.6'],s:false},
+ {id:'4.12',n:'해로부터 해를 만들기',d:['3.6','3.3','4.11'],s:false},
+ {id:'4.13',n:'원분다항식의 기약성',d:['3.6','4.12','4.7','4.10'],s:false},
+ {id:'5.1',n:'유리수는 동형사상에 의해 불변',d:[],s:false},
+ {id:'5.2',n:'최소다항식과 기약다항식',d:['3.6'],s:false},
+ {id:'5.3',n:'단순확대체',d:['5.2','3.6','3.5'],s:false},
+ {id:'5.4',n:'잉여류군과 단순확대체',d:['5.2','3.6','3.7'],s:false},
+ {id:'5.5',n:'f(x)가 만들어내는 동형',d:['5.2'],s:false},
+ {id:'5.6',n:'동형사상과 유리함수 교환',d:['5.1'],s:false},
+ {id:'5.7',n:'동형사상은 켤레해로 옮긴다 (1)',d:['5.1'],s:false},
+ {id:'5.8',n:'동형사상은 켤레해로 옮긴다 (2)',d:['3.6','5.7'],s:false},
+ {id:'5.9',n:'동형사상의 개수와 종류',d:['5.6','5.3','5.5'],s:false},
+ {id:'5.10',n:'일차독립, 일차종속',d:[],s:false},
+ {id:'5.11',n:'벡터 표현의 일의성',d:['5.10'],s:false},
+ {id:'5.12',n:'기저의 완전성',d:['5.10'],s:false},
+ {id:'5.13',n:'Q(α)의 기저',d:['3.6','5.11'],s:false},
+ {id:'5.14',n:'선형공간의 차원',d:['5.10','5.12'],s:false},
+ {id:'5.15',n:'선형공간의 일치',d:['5.10','5.14'],s:false},
+ {id:'5.16',n:'자기동형사상이 되는 조건',d:['5.9','5.6','5.1','5.2','5.13','5.15'],s:false},
+ {id:'5.17',n:'자기동형사상의 곱도 자기동형사상',d:[],s:false},
+ {id:'5.18',n:'자기동형군',d:['5.17','1.4'],s:false},
+ {id:'5.19',n:'차원의 곱셈 공식',d:['3.6','3.5','5.13'],s:false},
+ {id:'5.20',n:'동형사상의 연장',d:['5.19','5.6'],s:false},
+ {id:'5.21',n:'Q(α,β)에 적용하는 동형사상',d:['5.6','4.10','5.20'],s:false},
+ {id:'5.22',n:'불변체',d:['5.18'],s:false,cl:['5.31','5.32']},
+ {id:'5.23',n:'불변부분군',d:['1.4','5.18'],s:false,cl:['5.31','5.32']},
+ {id:'5.24',n:'대수적 확대체는 단순확대체',d:[],s:false},
+ {id:'5.25',n:'최소분해체는 단순확대체',d:['5.24'],s:false},
+ {id:'5.26',n:'(최소분해체 차수)=(갈루아군 위수)',d:['5.25','5.3','5.2','3.6','5.9','5.6','5.16','5.8','5.18'],s:false},
+ {id:'5.27',n:'Q(α)가 갈루아 확대체가 되는 조건',d:['5.16','5.9'],s:false},
+ {id:'5.28',n:'최소분해체의 정규성',d:['5.6','5.25','3.1','5.2','3.6'],s:false},
+ {id:'5.29',n:'중간체와 갈루아군의 대응',d:['5.25','5.3','5.28','5.7','5.9','3.6','5.15'],s:false},
+ {id:'5.30',n:'차수 공식',d:['5.28','5.24','5.29','5.19'],s:false},
+ {id:'5.31',n:'갈루아 대응 (부분군→중간체)',d:['5.22','5.23','5.30','5.29','5.21','5.27','5.19','5.6','5.3','5.18'],s:false},
+ {id:'5.32',n:'갈루아 대응 (중간체→부분군)',d:['5.22','5.23','5.31','2.1','5.2','3.6','5.15','5.18'],s:false},
+ {id:'5.33',n:'M과 H의 갈루아 대응',d:['5.4'],s:false},
+ {id:'5.34',n:'중간체가 갈루아 확대체가 되는 조건',d:['5.29','5.21','5.30','5.27','5.32','5.33','2.3','2.8','5.18'],s:false},
+ {id:'6.1',n:'a의 n제곱근의 거듭제곱근 표현',d:['1.12','4.8'],s:false},
+ {id:'6.2',n:'가해군과 거듭순환 확대의 대응',d:['5.29','5.34','5.18'],s:false},
+ {id:'6.3',n:'원분확대체의 갈루아군',d:['4.13','5.2','5.3','4.7','1.12','5.16','2.25','1.16','6.2'],s:false},
+ {id:'6.4',n:'거듭제곱근 확대→순환 확대',d:['3.6','4.6'],s:false},
+ {id:'6.5',n:'순환 확대→거듭제곱근 확대',d:['5.15','5.26','6.4'],s:false},
+ {id:'6.6',n:'가해군→해는 거듭제곱근 표현',d:['6.2','6.5','6.1','5.18'],s:false},
+ {id:'6.7',n:'누차거듭제곱근 확대체의 갈루아 폐포',d:['6.3'],s:false},
+ {id:'6.8',n:'거듭제곱근 표현→가해군',d:['6.7','5.29','5.34','6.2','2.30','6.6','5.18'],s:false},
+ {id:'6.9',n:'위수가 p인 원소의 존재 (코시)',d:[],s:false},
+ {id:'6.10',n:'★ 5차 방정식의 비가해성',d:['3.4','4.1','5.26','6.9','2.28','6.8'],s:false},
+];
 
-        window.addEventListener('keyup', (e) => {
-            keys[e.key] = false;
-        });
+const UB={};
+T.forEach(t=>{UB[t.id]=[];});
+T.forEach(t=>{t.d.forEach(d=>{if(UB[d])UB[d].push(t.id);});});
 
-        function checkCircleCollision(c1, c2, r1, r2) {
-            const dx = c1.x - c2.x;
-            const dy = c1.y - c2.y;
-            const dist = Math.sqrt(dx * dx + dy * dy);
-            return dist < r1 + r2;
+const CH_COL={'1':'#0C447C','2':'#3C3489','3':'#27500A','4':'#633806','5':'#085041','6':'#712B13'};
+const CH_BG={'1':'#E6F1FB','2':'#EEEDFE','3':'#EAF3DE','4':'#FAEEDA','5':'#E1F5EE','6':'#FAECE7'};
+const CH_BD={'1':'#85B7EB','2':'#AFA9EC','3':'#97C459','4':'#EF9F27','5':'#5DCAA5','6':'#F0997B'};
+const DU=['#1a6dd4','#5b9fe8','#9fc8f5'];
+const DB=['#6b21e8','#9d5ef0','#c49df8'];
+
+let SEL=null, curCh='all', POS={};
+const NW=122, NH=40;
+
+// ── RADIAL LAYOUT ──────────────────────────────────────────────────────────
+// All theorems on ONE big circle. Chapters get angular slices; within each
+// slice theorems are evenly spaced. The result is a single clean ring.
+function makeLayout(){
+  const pos={};
+  const byChap={};
+  T.forEach(t=>{
+    const c=t.id.split('.')[0];
+    if(!byChap[c])byChap[c]=[];
+    byChap[c].push(t);
+  });
+  const chs=Object.keys(byChap).sort();
+  const totalN=T.length;
+  const CX=2996, CY=2996, R=2820;
+  const GAP_FRAC=0.036; // angular gap between chapters (fraction of full circle)
+  const totalGap=GAP_FRAC*chs.length;
+  const usableFrac=1-totalGap;
+
+  // Each chapter gets arc proportional to its theorem count
+  let startAng=-Math.PI/2; // start from top
+  chs.forEach(ch=>{
+    const items=byChap[ch].sort((a,b)=>+a.id.split('.')[1]-+b.id.split('.')[1]);
+    const M=items.length;
+    const arcSpan=(M/totalN)*usableFrac*2*Math.PI;
+    items.forEach((t,i)=>{
+      const frac=M>1?i/(M-1):0.5;
+      const ang=startAng+frac*arcSpan;
+      pos[t.id]={x:CX+R*Math.cos(ang), y:CY+R*Math.sin(ang), w:NW, h:NH, ang};
+    });
+    startAng+=arcSpan+GAP_FRAC*2*Math.PI;
+  });
+  return pos;
+}
+
+// ── SVG SETUP ──────────────────────────────────────────────────────────────
+let pan={x:0,y:0,sc:1};
+let dragging=false, lastMouse=null;
+const sv=document.getElementById('sv');
+const mr=document.getElementById('mr');
+
+function buildMap(){
+  POS=makeLayout();
+  mr.innerHTML='';
+
+  const eg=document.createElementNS('http://www.w3.org/2000/svg','g');
+  eg.id='eg'; mr.appendChild(eg);
+  const ng=document.createElementNS('http://www.w3.org/2000/svg','g');
+  ng.id='ng'; mr.appendChild(ng);
+
+  T.forEach(t=>{
+    const p=POS[t.id]; if(!p)return;
+    const g=document.createElementNS('http://www.w3.org/2000/svg','g');
+    g.id=`n-${t.id}`;
+    g.setAttribute('transform',`translate(${(p.x-p.w/2).toFixed(1)},${(p.y-p.h/2).toFixed(1)})`);
+    g.style.cursor='pointer';
+
+    const r=document.createElementNS('http://www.w3.org/2000/svg','rect');
+    r.setAttribute('width',p.w); r.setAttribute('height',p.h); r.setAttribute('rx',4);
+    r.setAttribute('fill',CH_BG[t.id.split('.')[0]]);
+    r.setAttribute('stroke',CH_BD[t.id.split('.')[0]]);
+    r.setAttribute('stroke-width',t.id==='6.10'?'2':'0.8');
+    if(t.s)r.setAttribute('stroke-dasharray','3,2');
+    g.appendChild(r);
+
+    const label1=document.createElementNS('http://www.w3.org/2000/svg','text');
+    label1.setAttribute('x','7'); label1.setAttribute('y','15');
+    label1.setAttribute('fill',CH_COL[t.id.split('.')[0]]);
+    label1.setAttribute('font-size','10.5'); label1.setAttribute('font-weight','500');
+    label1.setAttribute('font-family',"system-ui,-apple-system,sans-serif");
+    label1.textContent=`Theorem ${t.id}${t.s?' ↗':''}${t.cl?' ○':''}`;
+    g.appendChild(label1);
+
+    if(t.n){
+      const label2=document.createElementNS('http://www.w3.org/2000/svg','text');
+      label2.setAttribute('x','7'); label2.setAttribute('y','28');
+      label2.setAttribute('fill',CH_COL[t.id.split('.')[0]]);
+      label2.setAttribute('font-size','8.5'); label2.setAttribute('opacity','0.72');
+      label2.setAttribute('font-family',"system-ui,-apple-system,sans-serif");
+      label2.textContent=t.n.length>16?t.n.slice(0,15)+'…':t.n;
+      g.appendChild(label2);
+    }
+
+    g.addEventListener('click',e=>{e.stopPropagation();selNode(t.id);});
+    ng.appendChild(g);
+  });
+
+  sv.addEventListener('click',()=>{
+    if(hasDragged)return;
+    if(SEL){SEL=null;lastUM={};lastBM={};drawEdges();hlNodes();rl();rd();}
+  });
+
+  drawEdges();
+  rv();
+}
+
+// ── BFS ────────────────────────────────────────────────────────────────────
+let lastUM={}, lastBM={};
+
+function bfsU(sid,max){
+  const v={};let f=[sid];
+  for(let d=1;d<=max&&f.length;d++){
+    const nx=[];
+    f.forEach(id=>{
+      (T.find(x=>x.id===id)||{d:[]}).d.forEach(dep=>{
+        if(v[dep]===undefined){v[dep]=d;nx.push(dep);}
+      });
+    });
+    f=nx;
+  }
+  return v;
+}
+
+function bfsB(sid,max){
+  const v={};let f=[sid];
+  for(let d=1;d<=max&&f.length;d++){
+    const nx=[];
+    f.forEach(id=>{
+      (UB[id]||[]).forEach(uid=>{
+        if(v[uid]===undefined){v[uid]=d;nx.push(uid);}
+      });
+    });
+    f=nx;
+  }
+  return v;
+}
+
+function getMaxU(){const v=parseInt(document.getElementById('depU').value);return isNaN(v)?999:v;}
+function getMaxB(){const v=parseInt(document.getElementById('depB').value);return isNaN(v)?999:v;}
+
+function highlight(){
+  if(!SEL){lastUM={};lastBM={};drawEdges();hlNodes();return;}
+  lastUM=bfsU(SEL,getMaxU());
+  lastBM=bfsB(SEL,getMaxB());
+  drawEdges();hlNodes();
+}
+
+// ── DRAW EDGES ─────────────────────────────────────────────────────────────
+function drawEdges(){
+  const eg=document.getElementById('eg'); if(!eg)return;
+  eg.innerHTML='';
+
+  T.forEach(t=>{
+    const tp=POS[t.id]; if(!tp)return;
+    t.d.forEach((di,ei)=>{
+      const fp=POS[di]; if(!fp)return;
+
+      let stroke='#c8c8c4', sw=0.8, op=SEL?0.05:0.38, marker='url(#a0)';
+
+      if(SEL){
+        const tU=lastUM[t.id], dU=lastUM[di];
+        const tB=lastBM[t.id], dB=lastBM[di];
+        const onU=(t.id===SEL||tU!==undefined)&&(di===SEL||dU!==undefined);
+        const onB=(t.id===SEL||tB!==undefined)&&(di===SEL||dB!==undefined);
+
+        if(onU){
+          const d=tU||1;
+          const ci=Math.min(d-1,2);
+          stroke=DU[ci];sw=2;op=1;marker=`url(#au${Math.min(d,3)})`;
+        } else if(onB){
+          const d=dB||1;
+          const ci=Math.min(d-1,2);
+          stroke=DB[ci];sw=1.6;op=1;marker=`url(#ab${Math.min(d,3)})`;
+        } else {
+          stroke='#ddd';sw=0.5;op=0.08;
         }
+      }
 
-        function resetBall() {
-            game.ball.x = game.fieldWidth / 2;
-            game.ball.y = game.fieldHeight / 2;
-            game.ball.vx = 0;
-            game.ball.vy = 0;
-        }
+      const dx=tp.x-fp.x, dy=tp.y-fp.y;
+      const dist=Math.sqrt(dx*dx+dy*dy)||1;
+      const nx=dx/dist, ny=dy/dist;
+      const ex1=fp.x+nx*(fp.w/2+2), ey1=fp.y+ny*(fp.h/2+2);
+      const ex2=tp.x-nx*(tp.w/2+6), ey2=tp.y-ny*(tp.h/2+6);
+      // Curve offset alternates direction per edge index
+      const off=(ei%3-1)*12;
+      const cx=(ex1+ex2)/2+ny*off, cy=(ey1+ey2)/2-nx*off;
 
-        function resetPlayers() {
-            game.player1.x = 400 * SCALE;
-            game.player1.y = 600 * SCALE;
-            game.player1.stamina = 100;
-            game.player1.sprinting = false;
-            game.player2.x = 1200 * SCALE;
-            game.player2.y = 600 * SCALE;
-            game.player2.stamina = 100;
-            game.player2.sprinting = false;
-        }
+      const path=document.createElementNS('http://www.w3.org/2000/svg','path');
+      path.setAttribute('fill','none');
+      path.setAttribute('d',`M${ex1.toFixed(1)},${ey1.toFixed(1)} Q${cx.toFixed(1)},${cy.toFixed(1)} ${ex2.toFixed(1)},${ey2.toFixed(1)}`);
+      path.setAttribute('stroke',stroke);
+      path.setAttribute('stroke-width',sw);
+      path.setAttribute('stroke-opacity',op);
+      path.setAttribute('marker-end',marker);
+      eg.appendChild(path);
+    });
+  });
+}
 
-        function gameLoop() {
-            if (!gameStarted) return;
+// ── HIGHLIGHT NODES ─────────────────────────────────────────────────────────
+function hlNodes(){
+  T.forEach(t=>{
+    const g=document.getElementById(`n-${t.id}`); if(!g)return;
+    const r=g.querySelector('rect');
+    const ch=t.id.split('.')[0];
+    // Reset
+    r.setAttribute('fill',CH_BG[ch]);
+    r.setAttribute('stroke',CH_BD[ch]);
+    r.setAttribute('stroke-width',t.id==='6.10'?'2':'0.8');
+    g.style.opacity='1';
 
-            // Sprint 처리
-            game.player1.sprinting = (keys['c'] || keys['C']) && game.player1.stamina > 0;
-            game.player2.sprinting = keys['Shift'] && game.player2.stamina > 0;
+    if(!SEL)return;
 
-            const p1Speed = game.player1.sprinting ? game.sprintSpeed : game.moveSpeed;
-            const p2Speed = game.player2.sprinting ? game.sprintSpeed : game.moveSpeed;
+    if(t.id===SEL){
+      r.setAttribute('stroke',CH_COL[ch]);
+      r.setAttribute('stroke-width','2.5');
+    } else if(lastUM[t.id]!==undefined){
+      const ci=Math.min(lastUM[t.id]-1,2);
+      r.setAttribute('fill','#dbeeff');
+      r.setAttribute('stroke',DU[ci]);
+      r.setAttribute('stroke-width','1.8');
+    } else if(lastBM[t.id]!==undefined){
+      const ci=Math.min(lastBM[t.id]-1,2);
+      r.setAttribute('fill','#f0e8ff');
+      r.setAttribute('stroke',DB[ci]);
+      r.setAttribute('stroke-width','1.8');
+    } else {
+      g.style.opacity='0.15';
+    }
+  });
+}
 
-            // 플레이어 1 이동
-            if (keys['a'] && game.player1.x > game.playerRadius) game.player1.x -= p1Speed;
-            if (keys['d'] && game.player1.x < game.fieldWidth - game.playerRadius) game.player1.x += p1Speed;
-            if (keys['w'] && game.player1.y > game.playerRadius) game.player1.y -= p1Speed;
-            if (keys['s'] && game.player1.y < game.fieldHeight - game.playerRadius) game.player1.y += p1Speed;
+// ── SELECT ─────────────────────────────────────────────────────────────────
+function selNode(id){
+  SEL=(SEL===id)?null:id;
+  highlight();
+  rl();
+  rd();
+}
 
-            // 플레이어 2 이동
-            if (keys['ArrowLeft'] && game.player2.x > game.playerRadius) game.player2.x -= p2Speed;
-            if (keys['ArrowRight'] && game.player2.x < game.fieldWidth - game.playerRadius) game.player2.x += p2Speed;
-            if (keys['ArrowUp'] && game.player2.y > game.playerRadius) game.player2.y -= p2Speed;
-            if (keys['ArrowDown'] && game.player2.y < game.fieldHeight - game.playerRadius) game.player2.y += p2Speed;
+// ── PAN / ZOOM ─────────────────────────────────────────────────────────────
+function apt(){mr.setAttribute('transform',`translate(${pan.x.toFixed(1)},${pan.y.toFixed(1)}) scale(${pan.sc})`);}
 
-            // 스태미나 관리
-            game.player1.stamina = game.player1.sprinting ? 
-                Math.max(0, game.player1.stamina - game.staminaDrainRate) :
-                Math.min(game.maxStamina, game.player1.stamina + game.staminaRegenRate);
-            
-            game.player2.stamina = game.player2.sprinting ? 
-                Math.max(0, game.player2.stamina - game.staminaDrainRate) :
-                Math.min(game.maxStamina, game.player2.stamina + game.staminaRegenRate);
+let hasDragged=false;
+sv.addEventListener('mousedown',e=>{
+  if(e.target.closest('g[id^="n-"]'))return;
+  dragging=true; hasDragged=false; lastMouse={x:e.clientX,y:e.clientY};
+});
+window.addEventListener('mousemove',e=>{
+  if(!dragging)return;
+  const dx=e.clientX-lastMouse.x, dy=e.clientY-lastMouse.y;
+  if(Math.abs(dx)>3||Math.abs(dy)>3) hasDragged=true;
+  pan.x+=dx; pan.y+=dy;
+  lastMouse={x:e.clientX,y:e.clientY};
+  apt();
+});
+window.addEventListener('mouseup',()=>{dragging=false;});
 
-            // 공 물리
-            game.ball.x += game.ball.vx;
-            game.ball.y += game.ball.vy;
-            game.ball.vx *= 0.985;
-            game.ball.vy *= 0.985;
+sv.addEventListener('wheel',e=>{
+  e.preventDefault();
+  const rc=sv.getBoundingClientRect();
+  const mx=e.clientX-rc.left, my=e.clientY-rc.top;
+  const delta=e.deltaY>0?0.88:1.13;
+  pan.x=mx-(mx-pan.x)*delta;
+  pan.y=my-(my-pan.y)*delta;
+  pan.sc=Math.max(0.08,Math.min(5,pan.sc*delta));
+  apt();
+},{passive:false});
 
-            // 공 벽 충돌
-            if (game.ball.x < game.ballRadius || game.ball.x > game.fieldWidth - game.ballRadius) {
-                game.ball.vx *= -0.8;
-                game.ball.x = game.ball.x < game.ballRadius ? game.ballRadius : game.fieldWidth - game.ballRadius;
-            }
-            if (game.ball.y < game.ballRadius || game.ball.y > game.fieldHeight - game.ballRadius) {
-                game.ball.vy *= -0.8;
-                game.ball.y = game.ball.y < game.ballRadius ? game.ballRadius : game.fieldHeight - game.ballRadius;
-            }
+function rv(){
+  const rc=sv.getBoundingClientRect();
+  const fitSc=Math.min(rc.width,rc.height)/5860*0.9;
+  pan={x:rc.width/2-2996*fitSc, y:rc.height/2-2996*fitSc, sc:fitSc};
+  apt();
+}
+function zi(){pan.sc=Math.min(5,pan.sc*1.2);apt();}
+function zo(){pan.sc=Math.max(0.08,pan.sc*0.83);apt();}
 
-            // 플레이어 1 충돌
-            if (checkCircleCollision(game.ball, game.player1, game.ballRadius, game.playerRadius)) {
-                const angle = Math.atan2(game.ball.y - game.player1.y, game.ball.x - game.player1.x);
-                const baseSpeed = 10 * SCALE;
-                const speed = game.player1.sprinting ? baseSpeed * 1.8 : baseSpeed;
-                game.ball.vx = Math.cos(angle) * speed;
-                game.ball.vy = Math.sin(angle) * speed;
-                
-                if (game.player1.sprinting) {
-                    game.player1.stamina = Math.max(0, game.player1.stamina - game.staminaKickCost);
-                }
-                
-                const dist = Math.sqrt(Math.pow(game.ball.x - game.player1.x, 2) + Math.pow(game.ball.y - game.player1.y, 2));
-                const overlap = game.ballRadius + game.playerRadius - dist;
-                game.ball.x += Math.cos(angle) * overlap;
-                game.ball.y += Math.sin(angle) * overlap;
-            }
+// ── LIST ───────────────────────────────────────────────────────────────────
+function rl(){
+  const q='';
+  const fi=T.filter(t=>true);
 
-            // 플레이어 2 충돌
-            if (checkCircleCollision(game.ball, game.player2, game.ballRadius, game.playerRadius)) {
-                const angle = Math.atan2(game.ball.y - game.player2.y, game.ball.x - game.player2.x);
-                const baseSpeed = 10 * SCALE;
-                const speed = game.player2.sprinting ? baseSpeed * 1.8 : baseSpeed;
-                game.ball.vx = Math.cos(angle) * speed;
-                game.ball.vy = Math.sin(angle) * speed;
-                
-                if (game.player2.sprinting) {
-                    game.player2.stamina = Math.max(0, game.player2.stamina - game.staminaKickCost);
-                }
-                
-                const dist = Math.sqrt(Math.pow(game.ball.x - game.player2.x, 2) + Math.pow(game.ball.y - game.player2.y, 2));
-                const overlap = game.ballRadius + game.playerRadius - dist;
-                game.ball.x += Math.cos(angle) * overlap;
-                game.ball.y += Math.sin(angle) * overlap;
-            }
+  document.getElementById('tlist').innerHTML=fi.map(t=>{
+    const ch=t.id.split('.')[0];
+    const du=lastUM[t.id], db=lastBM[t.id];
+    const badge=du!==undefined
+      ?` <span style="font-size:9px;background:#dbeeff;color:#1a6dd4;padding:0 3px;border-radius:3px">↑${du}</span>`
+      :db!==undefined
+      ?` <span style="font-size:9px;background:#f0e8ff;color:#6b21e8;padding:0 3px;border-radius:3px">↓${db}</span>`
+      :'';
+    const utg=t.d.slice().sort((a,b)=>a.split('.').map(Number).reduce((x,y)=>x*1000+y)-b.split('.').map(Number).reduce((x,y)=>x*1000+y)).map(d=>`<span class="tag tu">${d}</span>`).join('');
+    const btg=(UB[t.id]||[]).slice().sort((a,b)=>a.split('.').map(Number).reduce((x,y)=>x*1000+y)-b.split('.').map(Number).reduce((x,y)=>x*1000+y)).map(d=>`<span class="tag tb2">${d}</span>`).join('');
+    const bgStyle=SEL&&SEL!==t.id&&du!==undefined?'background:rgba(219,238,255,0.5)'
+                 :SEL&&SEL!==t.id&&db!==undefined?'background:rgba(240,232,255,0.5)':'';
+    return `<div class="ti${SEL===t.id?' sel':''}" style="${bgStyle}" onclick="selNode('${t.id}')">
+      <div class="tdot" style="background:${CH_COL[ch]}"></div>
+      <div class="tinf">
+        <div class="tiid">${t.id}${badge}</div>
+        ${t.n?`<div class="tinm">${t.n}</div>`:''}
+        <div class="titags">${utg}${btg}</div>
+      </div>
+    </div>`;
+  }).join('');
 
-            // 골 감지
-            const goalTop = (game.fieldHeight - game.goalWidth) / 2;
-            const goalBottom = goalTop + game.goalWidth;
+}
 
-            if (game.ball.x < 0 && game.ball.y >= goalTop && game.ball.y <= goalBottom) {
-                score.right++;
-                game.lastScoredTeam = 'right';
-                game.glowIntensity = 100;
-                document.getElementById('scoreRight').textContent = score.right;
-                resetBall();
-                resetPlayers();
-                gameStarted = false;
-                document.getElementById('startHint').style.display = 'block';
-            }
+function rd(){
+  const dp=document.getElementById('detail');
+  if(!SEL){dp.innerHTML='';return;}
+  const t=T.find(x=>x.id===SEL);
+  const ch=t.id.split('.')[0];
+  const sortIds=arr=>arr.slice().sort((a,b)=>a.split('.').map(Number).reduce((x,y)=>x*1000+y)-b.split('.').map(Number).reduce((x,y)=>x*1000+y));
+  const utg=t.d.length?sortIds(t.d).map(d=>`<span class="tag tu" style="cursor:pointer" onclick="selNode('${d}')">${d}</span>`).join(''):'<span style="color:#9b9b96;font-style:italic;font-size:10px">없음</span>';
+  const btg=(UB[t.id]||[]).length?sortIds(UB[t.id]||[]).map(d=>`<span class="tag tb2" style="cursor:pointer" onclick="selNode('${d}')">${d}</span>`).join(''):'<span style="color:#9b9b96;font-style:italic;font-size:10px">없음</span>';
+  dp.innerHTML=`<h4 style="color:${CH_COL[ch]}">Theorem ${t.id}${t.n?' — '+t.n:''}</h4>
+    <div class="ddr"><span class="ddl">사용</span><div class="ddtags">${utg}</div></div>
+    <div class="ddr"><span class="ddl">피사용</span><div class="ddtags">${btg}</div></div>`;
+}
 
-            if (game.ball.x > game.fieldWidth && game.ball.y >= goalTop && game.ball.y <= goalBottom) {
-                score.left++;
-                game.lastScoredTeam = 'left';
-                game.glowIntensity = 100;
-                document.getElementById('scoreLeft').textContent = score.left;
-                resetBall();
-                resetPlayers();
-                gameStarted = false;
-                document.getElementById('startHint').style.display = 'block';
-            }
+function setCh(c,btn){
+  curCh=c;
+  document.querySelectorAll('.cb').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  rl();
+}
 
-            // 그리기
-            draw(goalTop, goalBottom);
-        }
-
-        function draw(goalTop, goalBottom) {
-            ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-
-            // 글로우 효과
-            if (game.glowIntensity > 0) {
-                if (game.lastScoredTeam === 'left') {
-                    const gradient = ctx.createLinearGradient(0, 0, game.fieldWidth * 0.3, 0);
-                    gradient.addColorStop(0, `rgba(33, 150, 243, ${game.glowIntensity * 0.003})`);
-                    gradient.addColorStop(1, 'rgba(33, 150, 243, 0)');
-                    ctx.fillStyle = gradient;
-                    ctx.fillRect(0, 0, game.fieldWidth * 0.3, game.fieldHeight);
-                } else if (game.lastScoredTeam === 'right') {
-                    const gradient = ctx.createLinearGradient(game.fieldWidth, 0, game.fieldWidth * 0.7, 0);
-                    gradient.addColorStop(0, `rgba(244, 67, 54, ${game.glowIntensity * 0.003})`);
-                    gradient.addColorStop(1, 'rgba(244, 67, 54, 0)');
-                    ctx.fillStyle = gradient;
-                    ctx.fillRect(game.fieldWidth * 0.7, 0, game.fieldWidth * 0.3, game.fieldHeight);
-                }
-                game.glowIntensity -= 2;
-            }
-
-            // 필드 배경
-            ctx.fillStyle = '#2d8a3e';
-            ctx.fillRect(0, 0, game.fieldWidth, game.fieldHeight);
-
-            // 필드 줄무늬
-            ctx.fillStyle = '#248a34';
-            for (let i = 1; i < 10; i += 2) {
-                ctx.fillRect(i * (game.fieldWidth / 10), 0, game.fieldWidth / 10, game.fieldHeight);
-            }
-
-            // 필드 테두리
-            ctx.strokeStyle = '#fff';
-            ctx.lineWidth = 5 * SCALE;
-            ctx.strokeRect(3, 3, game.fieldWidth - 6, game.fieldHeight - 6);
-
-            // 센터라인
-            ctx.lineWidth = 3 * SCALE;
-            ctx.beginPath();
-            ctx.moveTo(game.fieldWidth / 2, 0);
-            ctx.lineTo(game.fieldWidth / 2, game.fieldHeight);
-            ctx.stroke();
-
-            // 센터 원
-            ctx.beginPath();
-            ctx.arc(game.fieldWidth / 2, game.fieldHeight / 2, 100 * SCALE, 0, Math.PI * 2);
-            ctx.stroke();
-
-            // 센터 점
-            ctx.fillStyle = '#fff';
-            ctx.beginPath();
-            ctx.arc(game.fieldWidth / 2, game.fieldHeight / 2, 5 * SCALE, 0, Math.PI * 2);
-            ctx.fill();
-
-            // 골
-            ctx.fillStyle = '#1565c0';
-            ctx.fillRect(0, goalTop, game.goalDepth, game.goalWidth);
-            ctx.strokeStyle = '#fff';
-            ctx.lineWidth = 4 * SCALE;
-            ctx.strokeRect(0, goalTop, game.goalDepth, game.goalWidth);
-
-            ctx.fillStyle = '#c62828';
-            ctx.fillRect(game.fieldWidth - game.goalDepth, goalTop, game.goalDepth, game.goalWidth);
-            ctx.strokeRect(game.fieldWidth - game.goalDepth, goalTop, game.goalDepth, game.goalWidth);
-
-            // 골 에어리어
-            ctx.lineWidth = 3 * SCALE;
-            ctx.strokeRect(0, goalTop - 60 * SCALE, 120 * SCALE, game.goalWidth + 120 * SCALE);
-            ctx.strokeRect(game.fieldWidth - 120 * SCALE, goalTop - 60 * SCALE, 120 * SCALE, game.goalWidth + 120 * SCALE);
-
-            // 플레이어 1 (파랑)
-            if (game.player1.sprinting) {
-                ctx.shadowColor = '#2196F3';
-                ctx.shadowBlur = 30 * SCALE;
-            }
-            ctx.fillStyle = '#2196F3';
-            ctx.beginPath();
-            ctx.arc(game.player1.x, game.player1.y, game.playerRadius, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.shadowBlur = 0;
-            ctx.strokeStyle = '#0d47a1';
-            ctx.lineWidth = 3 * SCALE;
-            ctx.stroke();
-            
-            ctx.fillStyle = '#fff';
-            ctx.beginPath();
-            ctx.arc(game.player1.x, game.player1.y - 8 * SCALE, 3 * SCALE, 0, Math.PI * 2);
-            ctx.fill();
-            
-            ctx.font = `bold ${16 * SCALE}px Arial`;
-            ctx.textAlign = 'center';
-            ctx.fillText('P1', game.player1.x, game.player1.y + 6 * SCALE);
-
-            // 플레이어 2 (빨강)
-            if (game.player2.sprinting) {
-                ctx.shadowColor = '#F44336';
-                ctx.shadowBlur = 30 * SCALE;
-            }
-            ctx.fillStyle = '#F44336';
-            ctx.beginPath();
-            ctx.arc(game.player2.x, game.player2.y, game.playerRadius, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.shadowBlur = 0;
-            ctx.strokeStyle = '#b71c1c';
-            ctx.lineWidth = 3 * SCALE;
-            ctx.stroke();
-            
-            ctx.fillStyle = '#fff';
-            ctx.beginPath();
-            ctx.arc(game.player2.x, game.player2.y - 8 * SCALE, 3 * SCALE, 0, Math.PI * 2);
-            ctx.fill();
-            
-            ctx.fillText('P2', game.player2.x, game.player2.y + 6 * SCALE);
-
-            // 공
-            ctx.fillStyle = '#fff';
-            ctx.beginPath();
-            ctx.arc(game.ball.x, game.ball.y, game.ballRadius, 0, Math.PI * 2);
-            ctx.fill();
-            
-            ctx.strokeStyle = '#000';
-            ctx.lineWidth = 2 * SCALE;
-            ctx.stroke();
-            ctx.beginPath();
-            ctx.moveTo(game.ball.x - 6 * SCALE, game.ball.y);
-            ctx.lineTo(game.ball.x + 6 * SCALE, game.ball.y);
-            ctx.moveTo(game.ball.x, game.ball.y - 6 * SCALE);
-            ctx.lineTo(game.ball.x, game.ball.y + 6 * SCALE);
-            ctx.stroke();
-
-            // 스태미나 바
-            const barWidth = 150 * SCALE;
-            const barHeight = 20 * SCALE;
-            
-            // 플레이어 1 스태미나
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
-            ctx.fillRect(game.player1.x - barWidth / 2, game.player1.y - 50 * SCALE, barWidth, barHeight);
-            ctx.fillStyle = game.player1.stamina > 30 ? '#4CAF50' : '#F44336';
-            ctx.fillRect(game.player1.x - barWidth / 2, game.player1.y - 50 * SCALE, (game.player1.stamina / game.maxStamina) * barWidth, barHeight);
-            ctx.strokeStyle = '#fff';
-            ctx.lineWidth = 2 * SCALE;
-            ctx.strokeRect(game.player1.x - barWidth / 2, game.player1.y - 50 * SCALE, barWidth, barHeight);
-
-            // 플레이어 2 스태미나
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
-            ctx.fillRect(game.player2.x - barWidth / 2, game.player2.y - 50 * SCALE, barWidth, barHeight);
-            ctx.fillStyle = game.player2.stamina > 30 ? '#4CAF50' : '#F44336';
-            ctx.fillRect(game.player2.x - barWidth / 2, game.player2.y - 50 * SCALE, (game.player2.stamina / game.maxStamina) * barWidth, barHeight);
-            ctx.strokeStyle = '#fff';
-            ctx.lineWidth = 2 * SCALE;
-            ctx.strokeRect(game.player2.x - barWidth / 2, game.player2.y - 50 * SCALE, barWidth, barHeight);
-        }
-
-        function resetGame() {
-            score = { left: 0, right: 0 };
-            document.getElementById('scoreLeft').textContent = '0';
-            document.getElementById('scoreRight').textContent = '0';
-            gameStarted = false;
-            document.getElementById('startHint').style.display = 'block';
-            game.player1 = { x: 400 * SCALE, y: 600 * SCALE, stamina: 100, sprinting: false };
-            game.player2 = { x: 1200 * SCALE, y: 600 * SCALE, stamina: 100, sprinting: false };
-            game.ball = { x: 800 * SCALE, y: 600 * SCALE, vx: 0, vy: 0 };
-            game.lastScoredTeam = null;
-            game.glowIntensity = 0;
-        }
-
-        // 게임 루프 시작
-        setInterval(gameLoop, 1000 / 60);
-        
-        // 초기 화면 그리기
-        draw((game.fieldHeight - game.goalWidth) / 2, (game.fieldHeight - game.goalWidth) / 2 + game.goalWidth);
-    </script>
+// ── INIT ───────────────────────────────────────────────────────────────────
+buildMap();
+rl();
+rd();
+</script>
 </body>
 </html>
